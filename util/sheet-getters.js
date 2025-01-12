@@ -55,33 +55,33 @@ async function getChannelIDs() {
     }
 }
 
-async function sendDailyNotification(client) {
+async function getStatuses() {
     try {
-        const channels = await getChannelIDs();
-        const id = await getIDForToday();
+        await doc.loadInfo();
+        const sheet = doc.sheetsByIndex[3];
+        const rows = await sheet.getRows();
 
-        if (channels.length === 0) {
-            return;
-        }
-
-        for (const channelId of channels) {
-            try {
-                const channel = await client.channels.fetch(channelId); // Fetch each channel dynamically
-
-                if (id) {
-                    await channel.send(
-                        `<@${id}>, It is your Question of the Day today! If you are unable, please let someone else on the staff team know :)`
-                    );
-                } else {
-                    await channel.send("I can't find an ID for the QOTD rota today...");
+        const statusWithEmojiPairs = rows
+            .map(row => {
+                const status = row.get('Status')?.trim();
+                const emoji = row.get('Emoji')?.trim();
+                if (status && emoji) {
+                    return { status, emoji }; // Return as object pair
                 }
-            } catch (fetchError) {
-                console.error(`Failed to fetch or send message to channel ID: ${channelId}`, fetchError);
-            }
+                return null;
+            })
+            .filter(pair => pair !== null); // Filter out invalid pairs
+
+        if (statusWithEmojiPairs.length === 0) {
+            console.warn("No valid statuses and types found...");
         }
+
+        return statusWithEmojiPairs; // Return the array of pairs
     } catch (error) {
-        console.error("Error in sendDailyNotification function:", error.message);
+        console.error("Error retrieving statuses and types:", error.message);
+        return [];
     }
 }
 
-module.exports = { sendDailyNotification };
+
+module.exports = { getChannelIDs, getIDForToday, getStatuses };

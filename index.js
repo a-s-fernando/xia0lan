@@ -2,8 +2,9 @@ require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Events, GatewayIntentBits, Collection, MessageFlags } = require('discord.js');
-const { sendDailyNotification } = require('./rota/rota');
+const { sendDailyNotification } = require('./util/rota-notif');
 const moment = require('moment');
+const { swapStatus } = require('./util/swap-status');
 const token = process.env.DISCORD_TOKEN;
 
 // Initialize the Discord client
@@ -20,8 +21,9 @@ client.once(Events.ClientReady, readyClient => {
   }
 
   const msUntilNextRun = nextRun.diff(now);
+
   setTimeout(() => {
-    sendDailyNotification(client); // Send the notification immediately
+    sendDailyNotification(client); // Send the notification
     setInterval(async () => {
       try {
         await sendDailyNotification(client); // And schedule the next one
@@ -30,7 +32,18 @@ client.once(Events.ClientReady, readyClient => {
       }
     }, 24 * 60 * 60 * 1000);
   }, msUntilNextRun);
+
+  swapStatus(client);
+  setInterval(async () => {
+    try {
+      await swapStatus(client);
+    } catch (error) {
+      console.error('Error swapping status:', error);
+    }
+  }, 30 * 60 * 1000);
+
 });
+
 client.login(token);
 
 

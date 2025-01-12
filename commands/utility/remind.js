@@ -1,17 +1,17 @@
-const { sendDailyNotification } = require('../../rota/rota.js');
+const { sendDailyNotification } = require('../../util/rota-notif.js');
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('remind')
-        .setDescription('Trigger the rota reminder'),
+        .setDescription('Trigger the util reminder'),
     async execute(interaction) {
         try {
             await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             await sendDailyNotification(interaction.client);
             await interaction.deleteReply();
         } catch (error) {
-            console.error('Error in the remind-rota command:', error);
+            console.error('Error in the remind-util command:', error);
             if(interaction.replied) await interaction.editReply('I think I messed up somewhere...');
         }
     },

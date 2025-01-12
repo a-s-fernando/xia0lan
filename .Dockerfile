@@ -6,7 +6,7 @@ RUN mkdir -p /opt/app
 WORKDIR /opt/app
 
 COPY commands/ ./commands
-COPY rota/ ./rota
+COPY util/ ./util
 COPY package.json package-lock.json deploy-commands.js index.js ./
 
 CMD [ "npm", "start" ]
