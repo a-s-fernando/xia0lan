@@ -7,7 +7,7 @@ module.exports = {
         .addStringOption(option =>
             option
                 .setName('message')
-                .setDescription('The message you want me to echo')
+                .setDescription('The message you want me to reply with')
                 .setRequired(true)
         ).addStringOption(option =>
             option
@@ -22,13 +22,14 @@ module.exports = {
             const messageId = interaction.options.getString('message_id');
             const channel = interaction.channel;
 
-            const targetMessage = await channel.messages.fetch(messageId).catch(() => null);
-
-            if (!targetMessage) {
-                await interaction.editReply("I couldn't find the message with the provided ID!");
-                return;
-            }
-            await targetMessage.reply(userMessage);
+            await channel.messages.fetch(messageId).then((message) => {
+                if (!message) {
+                    interaction.editReply("I couldn't find the message with the provided ID!");
+                } else {
+                    message.reply(userMessage);
+                    interaction.deleteReply();
+                }
+            }).catch(() => throw new Error('Failed to fetch message'));
         } catch (error) {
             console.error(error);
             await interaction.editReply('Something went wrong while trying to reply to the message!');
