@@ -14,12 +14,6 @@ Before using this bot, ensure you:
 
 ## Getting Started
 Follow these steps to set up and start the bot:
-### Clone the repository
-Begin by cloning the bot project:
-``` bash
-git clone <repository-url>
-cd xiaolan-bot
-```
 ### Install Dependencies
 Install the required npm packages:
 ``` bash
