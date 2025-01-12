@@ -7,6 +7,6 @@ WORKDIR /opt/app
 
 COPY commands/ ./commands
 COPY rota/ ./rota
-COPY package.json package-lock.json deploy-commands.js index.js .env ./
+COPY package.json package-lock.json deploy-commands.js index.js ./
 
 CMD [ "npm", "start" ]
