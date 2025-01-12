@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install-deps": "npm install",
     "deploy-commands": "node deploy-commands.js",
-    "start-bot": "node index.js"
+    "start-bot": "node index.js",
+    "start": "npm run install-deps && npm run deploy-commands && npm run start-bot"
   },
   "keywords": [],
   "author": "",
