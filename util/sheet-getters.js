@@ -25,7 +25,7 @@ async function getIDForToday() {
 
         for (let row of rows) {
             if (row.get('Day') === today) {
-                return row.get('ID');
+                return {id: row.get('ID'), type: row.get('Type')};
             }
         }
         return null;

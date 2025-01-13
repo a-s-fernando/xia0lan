@@ -3,7 +3,9 @@ const { getChannelIDs, getIDForToday } = require('./sheet-getters.js');
 async function sendDailyNotification(client) {
     try {
         const channels = await getChannelIDs();
-        const id = await getIDForToday();
+        const idObject = await getIDForToday();
+        const id = idObject.id;
+        const type = idObject.type;
 
         if (channels.length === 0) {
             return;
@@ -15,7 +17,7 @@ async function sendDailyNotification(client) {
 
                 if (id) {
                     await channel.send(
-                        `<@${id}>, It is your Question of the Day today! If you are unable, please let someone else on the staff team know :)`
+                        `<@${type === 'Type' ? '&' : ''}${id}>, It is your Question of the Day today! If you are unable, please let someone else on the staff team know :)`
                     );
                 } else {
                     await channel.send("I can't find an ID for the QOTD util today...");
