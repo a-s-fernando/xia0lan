@@ -17,7 +17,7 @@ async function sendDailyNotification(client) {
 
                 if (id) {
                     await channel.send(
-                        `<@${type === 'Type' ? '&' : ''}${id}>, It is your Question of the Day today! If you are unable, please let someone else on the staff team know :)`
+                        `<@${type === 'Role' ? '&' : ''}${id}>, It is your Question of the Day today! If you are unable, please let someone else on the staff team know :)`
                     );
                 } else {
                     await channel.send("I can't find an ID for the QOTD util today...");
