@@ -35,14 +35,14 @@ async function getIDForToday() {
     }
 }
 
-async function getChannelIDs() {
+async function getRotaChannelIDs() {
     try {
         await doc.loadInfo();
         const sheet = doc.sheetsByIndex[2];
         const rows = await sheet.getRows();
 
         const channelIDs = rows
-            .map((row) => row.get('Discord Channel ID'))
+            .map((row) => row.get('Rota Channel ID'))
             .filter((id) => id && id.trim()); // Filter out empty or invalid IDs
         if (channelIDs.length === 0) {
             console.warn("No channel IDs found...");
@@ -51,6 +51,44 @@ async function getChannelIDs() {
         return channelIDs;
     } catch (error) {
         console.error("Error retrieving channel IDs:", error.message);
+        return [];
+    }
+}
+
+async function getWelcomeChannelIDs() {
+    try {
+        await doc.loadInfo();
+        const sheet = doc.sheetsByIndex[2];
+        const rows = await sheet.getRows();
+
+        const channelIDs = rows
+            .map((row) => row.get('Welcome Channel ID'))
+            .filter((id) => id && id.trim()); // Filter out empty or invalid IDs
+        if (channelIDs.length === 0) {
+            console.warn("No channel IDs found...");
+        }
+
+        return channelIDs;
+    } catch (error) {
+        console.error("Error retrieving channel IDs:", error.message);
+        return [];
+    }
+}
+
+async function getWelcomeMessage() {
+    try {
+        await doc.loadInfo();
+        const sheet = doc.sheetsByIndex[2];
+        const rows = await sheet.getRows();
+
+        if (rows.length > 0 && rows[0]['Welcome Message']) {
+            return rows[0]['Welcome Message'];
+        } else {
+            console.warn('No welcome message found in the sheet.');
+            return "Welcome to the server, ${member}!";
+        }
+    } catch (error) {
+        console.error("Error retrieving welcome message:", error.message);
         return [];
     }
 }
@@ -84,4 +122,4 @@ async function getStatuses() {
 }
 
 
-module.exports = { getChannelIDs, getIDForToday, getStatuses };
+module.exports = { getWelcomeMessage, getRotaChannelIDs, getWelcomeChannelIDs, getIDForToday, getStatuses };

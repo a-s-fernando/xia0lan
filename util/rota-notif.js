@@ -1,8 +1,8 @@
-const { getChannelIDs, getIDForToday } = require('./sheet-getters.js');
+const { getRotaChannelIDs, getIDForToday } = require('./sheet-getters.js');
 
 async function sendDailyNotification(client) {
     try {
-        const channels = await getChannelIDs();
+        const channels = await getRotaChannelIDs();
         const idObject = await getIDForToday();
         const id = idObject.id;
         const type = idObject.type;

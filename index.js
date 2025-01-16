@@ -5,6 +5,7 @@ const { Client, Events, GatewayIntentBits, Collection, MessageFlags } = require(
 const { sendDailyNotification } = require('./util/rota-notif');
 const moment = require('moment');
 const { swapStatus } = require('./util/swap-status');
+const initializeWelcomeEvent = require('./util/welcome');
 const token = process.env.DISCORD_TOKEN;
 
 // Initialize the Discord client
