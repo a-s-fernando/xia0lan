@@ -121,5 +121,25 @@ async function getStatuses() {
     }
 }
 
+async function getNewRoles() {
+    try {
+        await doc.loadInfo();
+        const sheet = doc.sheetsByIndex[2];
+        const rows = await sheet.getRows();
 
-module.exports = { getWelcomeMessage, getRotaChannelIDs, getWelcomeChannelIDs, getIDForToday, getStatuses };
+        const roleIDs = rows
+            .map((row) => row.get('Roles'))
+            .filter((id) => id && id.trim());
+        if (roleIDs.length === 0) {
+            console.warn("No channel IDs found...");
+        }
+
+        return roleIDs;
+    } catch (error) {
+        console.error("Error retrieving channel IDs:", error.message);
+        return [];
+    }
+}
+
+
+module.exports = { getWelcomeMessage, getRotaChannelIDs, getWelcomeChannelIDs, getIDForToday, getStatuses, getNewRoles };
