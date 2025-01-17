@@ -97,5 +97,5 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 });
 
-
+initializeWelcomeEvent();
 client.login(process.env.DISCORD_TOKEN);
