@@ -83,7 +83,7 @@ async function getWelcomeMessage() {
 
 
         if (rows.length > 0 && rows[0].get('Welcome Message')) {
-            return rows[0]['Welcome Message'];
+            return rows[0].get('Welcome Message');
         } else {
             console.warn('No welcome message found in the sheet.');
             return "Welcome to the server, ${member}!";
