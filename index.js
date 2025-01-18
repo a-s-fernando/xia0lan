@@ -9,7 +9,7 @@ const initializeWelcomeEvent = require('./util/welcome');
 const token = process.env.DISCORD_TOKEN;
 
 // Initialize the Discord client
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences] });
 client.once(Events.ClientReady, readyClient => {
   console.log(`Logged in as ${client.user.tag}`);
 

@@ -2,6 +2,7 @@ const { getWelcomeChannelIDs, getWelcomeMessage, getNewRoles } = require('./shee
 
 module.exports = (client) => {
     client.on('guildMemberAdd', async (member) => {
+        console.log('new member', member);
         try {
             const channels = await getWelcomeChannelIDs();
             const rawMessage = await getWelcomeMessage();
