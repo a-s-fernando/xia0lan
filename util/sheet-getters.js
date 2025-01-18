@@ -81,7 +81,8 @@ async function getWelcomeMessage() {
         const sheet = doc.sheetsByIndex[2];
         const rows = await sheet.getRows();
 
-        if (rows.length > 0 && rows[0]['Welcome Message']) {
+
+        if (rows.length > 0 && rows[0].get('Welcome Message')) {
             return rows[0]['Welcome Message'];
         } else {
             console.warn('No welcome message found in the sheet.');
