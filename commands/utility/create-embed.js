@@ -19,6 +19,10 @@ module.exports = {
         .addStringOption(option =>
             option.setName('image')
                 .setDescription('The image of the embed')
+                .setRequired(false))
+        .addBooleanOption(option =>
+            option.setName('timestamp')
+                .setDescription('Whether to include a timestamp in the embed')
                 .setRequired(false)),
 
     async execute(interaction) {
@@ -26,6 +30,7 @@ module.exports = {
         const description = interaction.options.getString('description');
         const color = interaction.options.getString('color') || '#000000';
         const image = interaction.options.getString('image');
+        const timestamp = interaction.options.getBoolean('timestamp') || false;
 
         const isValidHex = /^#([0-9A-F]{3}){1,2}$/i.test(color);
         if (!isValidHex) {
@@ -39,8 +44,11 @@ module.exports = {
             .setTitle(title)
             .setDescription(description)
             .setColor(color)
-            .setImage(image)
-            .setTimestamp();
+            .setImage(image);
+
+        if (timestamp) {
+            embed.setTimestamp();
+        }
 
         await interaction.reply({ embeds: [embed] });
     }
