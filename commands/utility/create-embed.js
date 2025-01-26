@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -26,6 +26,8 @@ module.exports = {
                 .setRequired(false)),
 
     async execute(interaction) {
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
         const title = interaction.options.getString('title');
         const description = interaction.options.getString('description');
         const color = interaction.options.getString('color') || '#000000';
@@ -34,10 +36,10 @@ module.exports = {
 
         const isValidHex = /^#([0-9A-F]{3}){1,2}$/i.test(color);
         if (!isValidHex) {
-            return interaction.reply({
+            await interaction.editReply({
                 content: 'Invalid color! Please provide a valid hex color code (e.g., #ff0000).',
-                flags: MessageFlags.Ephemeral,
             });
+            return;
         }
 
         const embed = new EmbedBuilder()
@@ -50,6 +52,7 @@ module.exports = {
             embed.setTimestamp();
         }
 
-        await interaction.reply({ embeds: [embed] });
+        await interaction.channel.send({ embeds: [embed] });
+        await interaction.deleteReply();
     }
 };
