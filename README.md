@@ -1,9 +1,10 @@
 # Xia0lan Bot
-Xia0lan Bot is a feature-rich Discord bot designed to help assist server staff, leveraging the Google Sheets API for no-code, dynamic configuration.
+Xia0lan Bot is a feature-rich Discord bot designed to help assist server staff, leveraging the Google Sheets API for no-code, dynamic configuration. This solution will not be immediately applicable to all use cases, and the code will need to be modified depending on your Google Sheets information layout.
 ## Features (in progress)
 - **Google Sheets Support**: Built-in integration with Google Sheets using the `google-spreadsheet` library, allowing for straightforward data management and configuration.
 - **Rota Reminders**: Configure rotas in your Sheet and have the bot automatically ping selected IDs in specified channels.
-- **Echo**: Simple echo command.
+- **Echo**: Echo some text through the bot
+- **Reply**: Reply to a specific message ID via the bot.
 
 ## Prerequisites
 Before using this bot, ensure you:
