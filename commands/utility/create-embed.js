@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags} = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -36,7 +36,7 @@ module.exports = {
         if (!isValidHex) {
             return interaction.reply({
                 content: 'Invalid color! Please provide a valid hex color code (e.g., #ff0000).',
-                ephemeral: true
+                flags: MessageFlags.Ephemeral,
             });
         }
 
