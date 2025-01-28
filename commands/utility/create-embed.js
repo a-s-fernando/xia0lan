@@ -7,11 +7,11 @@ module.exports = {
         .addStringOption(option =>
             option.setName('title')
                 .setDescription('The title of the embed')
-                .setRequired(true))
+                .setRequired(false))
         .addStringOption(option =>
             option.setName('description')
                 .setDescription('The description of the embed')
-                .setRequired(true))
+                .setRequired(false))
         .addStringOption(option =>
             option.setName('color')
                 .setDescription('The color of the embed (hex code, e.g., #ff0000)')
