@@ -20,6 +20,22 @@ module.exports = {
             option.setName('image')
                 .setDescription('The image of the embed')
                 .setRequired(false))
+        .addStringOption(option =>
+            option.setName('author-name')
+                .setDescription('The name of the author')
+                .setRequired(false))
+        .addStringOption(option =>
+            option.setName('author-icon')
+                .setDescription('The icon URL of the author')
+                .setRequired(false))
+        .addStringOption(option =>
+            option.setName('author-url')
+                .setDescription('The URL of the author')
+                .setRequired(false))
+        .addStringOption(option =>
+            option.setName('thumbnail')
+                .setDescription('The URL of the thumbnail image')
+                .setRequired(false))
         .addBooleanOption(option =>
             option.setName('timestamp')
                 .setDescription('Whether to include a timestamp in the embed')
@@ -32,6 +48,10 @@ module.exports = {
         const description = interaction.options.getString('description');
         const color = interaction.options.getString('color') || '#000000';
         const image = interaction.options.getString('image');
+        const authorName = interaction.options.getString('author-name');
+        const authorIcon = interaction.options.getString('author-icon');
+        const authorUrl = interaction.options.getString('author-url');
+        const thumbnail = interaction.options.getString('thumbnail');
         const timestamp = interaction.options.getBoolean('timestamp') || false;
 
         const isValidHex = /^#([0-9A-F]{3}){1,2}$/i.test(color);
@@ -46,8 +66,16 @@ module.exports = {
             .setTitle(title)
             .setDescription(description)
             .setColor(color)
-            .setImage(image);
+            .setImage(image)
+            .setThumbnail(thumbnail)
 
+        if (authorName) {
+            embed.setAuthor({
+                name: authorName,
+                iconURL: authorIcon,
+                url: authorUrl,
+            });
+        }
         if (timestamp) {
             embed.setTimestamp();
         }
