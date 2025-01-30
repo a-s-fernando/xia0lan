@@ -47,7 +47,7 @@ module.exports = {
             setTimeout(async () => {
                 try {
                     await interaction.followUp({
-                        content: `Here is your reminder for this message: ${message.url}`,
+                        content: `${interaction.user}, here is your reminder for this message: ${message.url}`,
                         flags: MessageFlags.Ephemeral
                     });
                 } catch (err) {
