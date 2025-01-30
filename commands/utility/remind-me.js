@@ -46,10 +46,12 @@ module.exports = {
 
             setTimeout(async () => {
                 try {
-                    await interaction.followUp({
+                    await interaction.channel.send({
                         content: `${interaction.user}, here is your reminder for this message: ${message.url}`,
                         flags: MessageFlags.Ephemeral
                     });
+                    await interaction.deleteReply();
+
                 } catch (err) {
                     console.error('Failed to send reminder:', err);
                 }
