@@ -3,7 +3,7 @@ const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('remind')
+        .setName('trigger-rota')
         .setDescription('Trigger the util reminder'),
     async execute(interaction) {
         try {
