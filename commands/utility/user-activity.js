@@ -12,6 +12,12 @@ module.exports = {
                 .setMinValue(1)
                 .setMaxValue(1000)
         )
+        .addStringOption(option =>
+            option
+                .setName('channel-ids')
+                .setDescription('Comma-separated list of channel IDs to analyze (leave empty to analyze all channels)')
+                .setRequired(false)
+        )
         .addBooleanOption(option =>
             option
                 .setName('include-bots')
@@ -23,6 +29,7 @@ module.exports = {
         await interaction.deferReply();
         
         const threshold = interaction.options.getInteger('threshold');
+        const channelIdsInput = interaction.options.getString('channel-ids');
         const includeBots = interaction.options.getBoolean('include-bots') ?? false;
         
         try {
@@ -30,18 +37,71 @@ module.exports = {
             const guild = interaction.guild;
             const members = await guild.members.fetch();
             
-            // Get all text channels the bot can access
-            const textChannels = guild.channels.cache.filter(channel => 
-                channel.type === ChannelType.GuildText && 
-                channel.permissionsFor(guild.members.me).has('ViewChannel') &&
-                channel.permissionsFor(guild.members.me).has('ReadMessageHistory')
-            );
+            let textChannels;
+            
+            if (channelIdsInput) {
+                // Parse and validate specific channel IDs
+                const channelIds = channelIdsInput.split(',').map(id => id.trim()).filter(id => id.length > 0);
+                
+                if (channelIds.length === 0) {
+                    return await interaction.editReply('❌ No valid channel IDs provided. Use comma-separated channel IDs or leave empty to analyze all channels.');
+                }
+                
+                textChannels = new Map();
+                const invalidChannels = [];
+                const inaccessibleChannels = [];
+                
+                for (const channelId of channelIds) {
+                    const channel = guild.channels.cache.get(channelId);
+                    
+                    if (!channel) {
+                        invalidChannels.push(channelId);
+                        continue;
+                    }
+                    
+                    if (channel.type !== ChannelType.GuildText) {
+                        invalidChannels.push(`${channelId} (not a text channel)`);
+                        continue;
+                    }
+                    
+                    if (!channel.permissionsFor(guild.members.me).has('ViewChannel') ||
+                        !channel.permissionsFor(guild.members.me).has('ReadMessageHistory')) {
+                        inaccessibleChannels.push(`<#${channelId}>`);
+                        continue;
+                    }
+                    
+                    textChannels.set(channelId, channel);
+                }
+                
+                if (invalidChannels.length > 0) {
+                    return await interaction.editReply(`❌ Invalid channel IDs found: ${invalidChannels.join(', ')}`);
+                }
+                
+                if (inaccessibleChannels.length > 0) {
+                    return await interaction.editReply(`❌ Cannot access these channels (missing permissions): ${inaccessibleChannels.join(', ')}`);
+                }
+                
+                if (textChannels.size === 0) {
+                    return await interaction.editReply('❌ No valid accessible text channels found from the provided IDs.');
+                }
+            } else {
+                // Get all text channels the bot can access
+                textChannels = guild.channels.cache.filter(channel => 
+                    channel.type === ChannelType.GuildText && 
+                    channel.permissionsFor(guild.members.me).has('ViewChannel') &&
+                    channel.permissionsFor(guild.members.me).has('ReadMessageHistory')
+                );
+            }
             
             if (textChannels.size === 0) {
                 return await interaction.editReply('No accessible text channels found to analyze.');
             }
             
-            await interaction.editReply(`🔍 Analyzing ${members.size} members across ${textChannels.size} channels. This may take a while...`);
+            const channelList = channelIdsInput 
+                ? Array.from(textChannels.values()).map(c => `<#${c.id}>`).join(', ')
+                : `${textChannels.size} channels`;
+            
+            await interaction.editReply(`🔍 Analyzing ${members.size} members across ${channelList}. This may take a while...`);
             
             const userActivity = new Map();
             let processedChannels = 0;
@@ -113,6 +173,10 @@ module.exports = {
                 .sort((a, b) => a.messageCount - b.messageCount);
             
             if (lowActivityUsers.length === 0) {
+                const channelsAnalyzedText = channelIdsInput 
+                    ? `${processedChannels} specific channels`
+                    : `${processedChannels} channels`;
+                
                 const embed = new EmbedBuilder()
                     .setColor(0x00ff00)
                     .setTitle('📊 User Activity Analysis')
@@ -120,7 +184,7 @@ module.exports = {
                     .addFields(
                         { name: 'Threshold', value: `${threshold} messages`, inline: true },
                         { name: 'Total Members Analyzed', value: userActivity.size.toString(), inline: true },
-                        { name: 'Channels Analyzed', value: processedChannels.toString(), inline: true }
+                        { name: 'Channels Analyzed', value: channelsAnalyzedText, inline: true }
                     )
                     .setTimestamp();
                 
@@ -128,6 +192,10 @@ module.exports = {
             }
             
             // Create embed with results
+            const channelsAnalyzedText = channelIdsInput 
+                ? `${processedChannels} specific channels`
+                : `${processedChannels} channels`;
+            
             const embed = new EmbedBuilder()
                 .setColor(0xff9900)
                 .setTitle('📊 User Activity Analysis')
@@ -135,7 +203,7 @@ module.exports = {
                 .addFields(
                     { name: 'Threshold', value: `${threshold} messages`, inline: true },
                     { name: 'Total Members Analyzed', value: userActivity.size.toString(), inline: true },
-                    { name: 'Channels Analyzed', value: processedChannels.toString(), inline: true }
+                    { name: 'Channels Analyzed', value: channelsAnalyzedText, inline: true }
                 )
                 .setTimestamp();
             
